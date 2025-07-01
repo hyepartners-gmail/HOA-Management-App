@@ -1,0 +1,48 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Build output
+/dist
+/bin
+/build
+
+# Go workspace stuff
+vendor/
+*.mod
+*.sum
+
+# Dependency directories (Go Modules)
+go.sum
+
+# Logs
+*.log
+
+# IDE/editor configs
+.vscode/
+.idea/
+*.swp
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Local env files
+.env
+.env.local
+.env.*
+
+# Node stuff (if used)
+node_modules/
+
+# Coverage files
+coverage.out
+
+# Temporary files
+*.tmp
+*.bak
