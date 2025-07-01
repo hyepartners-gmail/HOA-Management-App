@@ -4,10 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/hyepartners-gmail/HOA-Management-App/backend/utils"
-
 	"cloud.google.com/go/datastore"
 	"github.com/google/uuid"
+	ds "github.com/hyepartners-gmail/HOA-Management-App/backend/datastore"
 )
 
 type CommunicationType string
@@ -31,7 +30,7 @@ type Communication struct {
 
 func SaveCommunication(c Communication) error {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 
 	key := datastore.NameKey("Communication", c.ID.String(), nil)
 	_, err := client.Put(ctx, key, &c)
@@ -40,7 +39,7 @@ func SaveCommunication(c Communication) error {
 
 func ListCommunications(limit int, commType string) ([]Communication, error) {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 
 	q := datastore.NewQuery("Communication").Order("-CreatedAt").Limit(limit)
 	if commType != "" {
@@ -54,7 +53,7 @@ func ListCommunications(limit int, commType string) ([]Communication, error) {
 
 func GetCommunicationByID(id string) (*Communication, error) {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 
 	var c Communication
 	key := datastore.NameKey("Communication", id, nil)

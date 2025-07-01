@@ -3,10 +3,11 @@ package main
 import (
 	"net/http"
 
+	"github.com/hyepartners-gmail/HOA-Management-App/backend/handlers"
 	"github.com/hyepartners-gmail/HOA-Management-App/backend/middleware"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
+	chimw "github.com/go-chi/chi/v5/middleware"
 )
 
 func setupRouter() http.Handler {
@@ -15,213 +16,245 @@ func setupRouter() http.Handler {
 	r.Use(middleware.CORSMiddleware)
 
 	// Global middleware
-	r.Use(middleware.RequestID)
-	r.Use(middleware.RealIP)
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
+	r.Use(chimw.RequestID)
+	r.Use(chimw.RealIP)
+	r.Use(chimw.Logger)
+	r.Use(chimw.Recoverer)
 
 	// Auth routes
 	r.Route("/api/auth", func(r chi.Router) {
-		r.Post("/login", LoginHandler)
-		r.Post("/forgot-password", ForgotPasswordHandler)
-		r.Post("/reset-password", ResetPasswordHandler)
+		r.Post("/login", handlers.LoginHandler)
+		r.Post("/forgot-password", handlers.PasswordResetRequestHandler)
+		r.Post("/reset-password", handlers.PasswordResetHandler)
 	})
 
 	// Cabin routes (admin + board)
 	r.Route("/api/cabins", func(r chi.Router) {
-		r.Use(JWTMiddleware, RoleMiddleware("admin", "president", "secretary", "treasurer"))
-		r.Get("/", GetCabinsHandler)
-		r.Post("/", CreateCabinHandler)
-		r.Get("/{id}", GetCabinByIDHandler)
-		r.Put("/{id}", UpdateCabinHandler)
+		r.Use(middleware.JWTMiddleware, middleware.RoleMiddleware("admin", "president", "secretary", "treasurer"))
+		r.Get("/", handlers.GetCabins)
+		r.Post("/", handlers.CreateCabin)
+		r.Get("/{id}", handlers.GetCabinByID)
+		r.Put("/{id}", handlers.UpdateCabin)
 	})
 
 	// Owner routes (admin only for writes)
 	r.Route("/api/owners", func(r chi.Router) {
-		r.Use(JWTMiddleware, RoleMiddleware("admin", "president", "secretary", "treasurer"))
-		r.Get("/", GetOwnersHandler)
+		r.Use(middleware.JWTMiddleware, middleware.RoleMiddleware("admin", "president", "secretary", "treasurer"))
+		r.Get("/", handlers.GetOwners)
 		r.Group(func(r chi.Router) {
-			r.Use(RoleMiddleware("admin"))
-			r.Post("/", CreateOwnerHandler)
-			r.Put("/{id}", UpdateOwnerHandler)
+			r.Use(middleware.RoleMiddleware("admin"))
+			r.Post("/", handlers.CreateOwner)
+			r.Put("/{id}", handlers.UpdateOwner)
 		})
 	})
 
-	// Portal routes by role
-	r.Route("/api/portal", func(r chi.Router) {
-		r.Use(JWTMiddleware)
-		r.Route("/admin", func(r chi.Router) {
-			r.Use(RoleMiddleware("admin"))
-			r.Get("/dashboard", AdminDashboardHandler)
-		})
-		r.Route("/president", func(r chi.Router) {
-			r.Use(RoleMiddleware("president"))
-			r.Get("/dashboard", PresidentDashboardHandler)
-		})
-		r.Route("/secretary", func(r chi.Router) {
-			r.Use(RoleMiddleware("secretary"))
-			r.Get("/dashboard", SecretaryDashboardHandler)
-		})
-		r.Route("/treasurer", func(r chi.Router) {
-			r.Use(RoleMiddleware("treasurer"))
-			r.Get("/dashboard", TreasurerDashboardHandler)
-		})
-		r.Route("/cabin-owner", func(r chi.Router) {
-			r.Use(RoleMiddleware("cabin_owner"))
-			r.Get("/dashboard", CabinOwnerDashboardHandler)
-		})
-	})
+	// // Portal routes by role
+	// r.Route("/api/portal", func(r chi.Router) {
+	// 	r.Use(middleware.JWTMiddleware)
+	// 	r.Route("/admin", func(r chi.Router) {
+	// 		r.Use(middleware.RoleMiddleware("admin"))
+	// 		r.Get("/dashboard", handlers.AdminDashboardHandler)
+	// 	})
+	// 	r.Route("/president", func(r chi.Router) {
+	// 		r.Use(middleware.RoleMiddleware("president"))
+	// 		r.Get("/dashboard", handlers.PresidentDashboardHandler)
+	// 	})
+	// 	r.Route("/secretary", func(r chi.Router) {
+	// 		r.Use(middleware.RoleMiddleware("secretary"))
+	// 		r.Get("/dashboard", handlers.SecretaryDashboardHandler)
+	// 	})
+	// 	r.Route("/treasurer", func(r chi.Router) {
+	// 		r.Use(middleware.RoleMiddleware("treasurer"))
+	// 		r.Get("/dashboard", handlers.TreasurerDashboardHandler)
+	// 	})
+	// 	r.Route("/cabin-owner", func(r chi.Router) {
+	// 		r.Use(middleware.RoleMiddleware("cabin_owner"))
+	// 		r.Get("/dashboard", handlers.CabinOwnerDashboardHandler)
+	// 	})
+	// })
 
 	r.Route("/api/invoices", func(r chi.Router) {
-		r.Use(JWTMiddleware, RoleMiddleware("admin", "treasurer", "cabin_owner"))
-		r.Get("/{id}/pdf", GetInvoicePDFURLHandler)
+		r.Use(middleware.JWTMiddleware, middleware.RoleMiddleware("admin", "treasurer", "cabin_owner"))
+		r.Get("/{id}/pdf", handlers.GetInvoicePDFURLHandler)
 	})
 
 	r.Route("/api/notifications", func(r chi.Router) {
-		r.Use(JWTMiddleware)
-		r.Get("/", ListNotificationsHandler)
-		r.Post("/seen", UpdateLastSeenNotificationHandler)
+		r.Use(middleware.JWTMiddleware)
+		r.Get("/", handlers.ListNotificationsHandler)
+		r.Post("/seen", handlers.UpdateLastSeenNotificationHandler)
 
 		r.Group(func(r chi.Router) {
-			r.Use(RoleMiddleware("admin", "president"))
-			r.Post("/", CreateNotificationHandler)
+			r.Use(middleware.RoleMiddleware("admin", "president"))
+			r.Post("/", handlers.CreateNotificationHandler)
 		})
 	})
 
 	r.Route("/api/message-board", func(r chi.Router) {
-		r.Use(JWTMiddleware, RoleMiddleware("admin", "president", "secretary", "treasurer", "cabin_owner"))
+		r.Use(middleware.JWTMiddleware, middleware.RoleMiddleware("admin", "president", "secretary", "treasurer", "cabin_owner"))
 
-		r.Get("/", ListPostsHandler)
-		r.Post("/", CreatePostHandler)
-		r.Delete("/{postID}", DeletePostHandler)
+		r.Get("/", handlers.ListPostsHandler)
+		r.Post("/", handlers.CreatePostHandler)
+		r.Delete("/{postID}", handlers.DeletePostHandler)
 
-		r.Get("/{postID}/comments", ListCommentsHandler)
-		r.Post("/{postID}/comments", CreateCommentHandler)
+		r.Get("/{postID}/comments", handlers.ListCommentsHandler)
+		r.Post("/{postID}/comments", handlers.CreateCommentHandler)
 	})
 
 	r.Route("/api/newsletters", func(r chi.Router) {
-		r.Use(JWTMiddleware)
+		r.Use(middleware.JWTMiddleware)
 
-		r.Get("/", ListNewslettersHandler)
+		r.Get("/", handlers.ListNewslettersHandler)
 
 		// Admin + President can create/publish
 		r.Group(func(r chi.Router) {
-			r.Use(RoleMiddleware("admin", "president"))
-			r.Post("/", CreateNewsletterHandler)
-			r.Post("/{id}/publish", PublishNewsletterHandler)
+			r.Use(middleware.RoleMiddleware("admin", "president"))
+			r.Post("/", handlers.CreateNewsletterHandler)
+			r.Post("/{id}/publish", handlers.PublishNewsletterHandler)
 		})
 	})
 
 	r.Route("/api/rules", func(r chi.Router) {
-		r.Use(JWTMiddleware, RoleMiddleware("admin", "president", "secretary"))
-		r.Get("/", GetHOARulesHandler)
-		r.Put("/", UpdateHOARulesHandler) // admin only
+		r.Use(middleware.JWTMiddleware, middleware.RoleMiddleware("admin", "president", "secretary"))
+		r.Get("/", handlers.GetHOARulesHandler)
+		r.Put("/", handlers.UpdateHOARulesHandler) // admin only
 	})
 
 	r.Route("/api/proxies", func(r chi.Router) {
-		r.Use(JWTMiddleware)
-		r.Post("/", SubmitProxyHandler) // cabin owner
-		r.Get("/", RoleMiddleware("admin", "secretary"), GetProxiesHandler)
+		r.Use(middleware.JWTMiddleware)
+		r.Post("/", handlers.SubmitProxyHandler) // cabin owner
+
+		r.Group(func(r chi.Router) {
+			r.Use(middleware.RoleMiddleware("admin", "president", "secretary"))
+			r.Get("/", handlers.GetProxiesHandler)
+		})
 	})
 
 	r.Route("/api/agenda-requests", func(r chi.Router) {
-		r.Use(JWTMiddleware)
-		r.Post("/", RoleMiddleware("cabin_owner"), SubmitAgendaRequestHandler)
-		r.Get("/", RoleMiddleware("secretary"), GetAgendaRequestsHandler)
-	})
-
-	r.Route("/api/minutes", func(r chi.Router) {
-		r.Use(JWTMiddleware)
-		r.Post("/", RoleMiddleware("secretary"), UploadMeetingMinutesHandler)
-		r.Get("/", GetMeetingMinutesHandler) // public/cabin owner access
-	})
-
-	r.Route("/api/assessments", func(r chi.Router) {
-		r.Use(JWTMiddleware)
+		r.Use(middleware.JWTMiddleware)
 
 		r.Group(func(r chi.Router) {
-			r.Use(RoleMiddleware("admin"))
-			r.Post("/", TriggerAssessmentHandler)
+			r.Use(middleware.RoleMiddleware("cabin_owner"))
+			r.Post("/", handlers.SubmitAgendaRequestHandler)
 		})
 
 		r.Group(func(r chi.Router) {
-			r.Use(RoleMiddleware("cabin_owner", "treasurer"))
-			r.Get("/", GetMyAssessmentsHandler)
+			r.Use(middleware.RoleMiddleware("secretary"))
+			r.Get("/", handlers.GetAgendaRequestsHandler)
+		})
+	})
+
+	r.Route("/api/minutes", func(r chi.Router) {
+		r.Use(middleware.JWTMiddleware)
+
+		r.Group(func(r chi.Router) {
+			r.Use(middleware.RoleMiddleware("secretary"))
+			r.Post("/", handlers.UploadMeetingMinutesHandler)
+		})
+
+		r.Get("/", handlers.GetMeetingMinutesHandler) // accessible to all authenticated users
+	})
+
+	r.Route("/api/assessments", func(r chi.Router) {
+		r.Use(middleware.JWTMiddleware)
+
+		r.Group(func(r chi.Router) {
+			r.Use(middleware.RoleMiddleware("admin"))
+			r.Post("/", handlers.TriggerAssessmentHandler)
+		})
+
+		r.Group(func(r chi.Router) {
+			r.Use(middleware.RoleMiddleware("cabin_owner", "treasurer"))
+			r.Get("/", handlers.GetMyAssessmentsHandler)
 		})
 	})
 
 	// Service Requests
 	r.Route("/api/service-requests", func(r chi.Router) {
-		r.Use(JWTMiddleware)
+		r.Use(middleware.JWTMiddleware)
 
-		r.Post("/", SubmitServiceRequestHandler)
+		r.Post("/", handlers.SubmitServiceRequestHandler)
 
 		r.Group(func(r chi.Router) {
-			r.Use(RoleMiddleware("admin"))
-			r.Get("/", GetAllServiceRequestsHandler)
-			r.Put("/status", UpdateServiceRequestStatusHandler)
+			r.Use(middleware.RoleMiddleware("admin"))
+			r.Get("/", handlers.GetAllServiceRequestsHandler)
+			r.Put("/status", handlers.UpdateServiceRequestStatusHandler)
 		})
 	})
 
 	// Talent Directory
 	r.Route("/api/talent", func(r chi.Router) {
-		r.Get("/", GetPublicTalentHandler)
-		r.Post("/", SubmitTalentHandler)
+		r.Get("/", handlers.GetPublicTalentHandler)
+		r.Post("/", handlers.SubmitTalentHandler)
 
 		r.Group(func(r chi.Router) {
-			r.Use(JWTMiddleware, RoleMiddleware("admin"))
-			r.Get("/all", GetAllTalentHandler)
-			r.Put("/approve", ToggleTalentApprovalHandler)
+			r.Use(middleware.JWTMiddleware, middleware.RoleMiddleware("admin"))
+			r.Get("/all", handlers.GetAllTalentHandler)
+			r.Put("/approve", handlers.ToggleTalentApprovalHandler)
 		})
 	})
 
 	// FAQ public and admin
 	r.Route("/api/faq", func(r chi.Router) {
-		r.Get("/", GetFAQsHandler)
+		r.Get("/", handlers.GetFAQsHandler)
 
 		r.Group(func(r chi.Router) {
-			r.Use(JWTMiddleware, RoleMiddleware("admin"))
-			r.Post("/", SaveFAQHandler)
+			r.Use(middleware.JWTMiddleware, middleware.RoleMiddleware("admin"))
+			r.Post("/", handlers.SaveFAQHandler)
 		})
 	})
 
 	r.Route("/api/me", func(r chi.Router) {
-		r.Use(JWTMiddleware)
-		r.Get("/", GetProfileHandler)
-		r.Put("/", UpdateProfileHandler)
-		r.Put("/password", UpdatePasswordHandler)
+		r.Use(middleware.JWTMiddleware)
+		r.Get("/", handlers.GetProfileHandler)
+		r.Put("/", handlers.UpdateProfileHandler)
+		r.Put("/password", handlers.UpdatePasswordHandler)
 	})
 
 	r.Route("/api/communications", func(r chi.Router) {
-		r.Use(JWTMiddleware)
-		r.Get("/", ListCommunicationsHandler)
-		r.Get("/{id}", GetCommunicationHandler)
+		r.Use(middleware.JWTMiddleware)
+		r.Get("/", handlers.ListCommunicationsHandler)
+		r.Get("/{id}", handlers.GetCommunicationHandler)
 	})
 
 	r.Route("/api/documents", func(r chi.Router) {
-		r.Use(JWTMiddleware)
-		r.Get("/", ListDocumentsHandler)
+		r.Use(middleware.JWTMiddleware)
+		r.Get("/", handlers.ListDocumentsHandler)
 
 		// Upload requires admin
 		r.Group(func(r chi.Router) {
-			r.Use(RoleMiddleware("admin"))
-			r.Post("/", UploadDocumentHandler)
+			r.Use(middleware.RoleMiddleware("admin"))
+			r.Post("/", handlers.UploadDocumentHandler)
 		})
 	})
 
 	r.Route("/api/audit-log", func(r chi.Router) {
-		r.Use(JWTMiddleware, RoleMiddleware("admin"))
-		r.Get("/", ListAuditLogsHandler)
+		r.Use(middleware.JWTMiddleware, middleware.RoleMiddleware("admin"))
+		r.Get("/", handlers.ListAuditLogsHandler)
 	})
 
 	r.Route("/api/polls", func(r chi.Router) {
-		r.Use(JWTMiddleware)
-		r.Get("/", ListPollsHandler)
-		r.Post("/{id}/vote", SubmitVoteHandler)
+		r.Use(middleware.JWTMiddleware)
+		r.Get("/", handlers.ListPollsHandler)
+		r.Post("/{id}/vote", handlers.SubmitVoteHandler)
 
 		r.Group(func(r chi.Router) {
-			r.Use(RoleMiddleware("president", "secretary", "treasurer", "admin"))
-			r.Post("/", CreatePollHandler)
+			r.Use(middleware.RoleMiddleware("president", "secretary", "treasurer", "admin"))
+			r.Post("/", handlers.CreatePollHandler)
+		})
+	})
+
+	r.Route("/api/invoices", func(r chi.Router) {
+		r.Use(middleware.JWTMiddleware, middleware.RoleMiddleware("admin", "treasurer", "cabin_owner"))
+		r.Get("/", handlers.GetInvoicesHandler)
+		r.Get("/{id}", handlers.GetInvoiceByIDHandler)
+		r.Get("/{id}/pdf", handlers.GetInvoicePDFURLHandler)
+
+		r.Group(func(r chi.Router) {
+			r.Use(middleware.RoleMiddleware("admin"))
+			r.Post("/", handlers.CreateInvoiceHandler)
+			r.Post("/manual-payment", handlers.RecordManualPaymentHandler)
+			r.Post("/{id}/mark-paid", handlers.MarkInvoicePaidHandler)
+			r.Post("/generate-quarterly", handlers.GenerateQuarterlyInvoicesHandler)
 		})
 	})
 

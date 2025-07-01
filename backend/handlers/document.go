@@ -63,7 +63,7 @@ func UploadDocumentHandler(w http.ResponseWriter, r *http.Request) {
 func ListDocumentsHandler(w http.ResponseWriter, r *http.Request) {
 	user := r.Context().Value("user").(*models.User)
 
-	docs, err := models.ListDocuments(user.Role)
+	docs, err := models.ListDocuments(string(user.Role))
 	if err != nil {
 		utils.JSONError(w, "Load failed", http.StatusInternalServerError)
 		return

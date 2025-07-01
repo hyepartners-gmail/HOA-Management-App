@@ -1,17 +1,22 @@
 package handlers
 
 import (
-	"backend/models"
-	"backend/utils"
 	"encoding/json"
 	"net/http"
+
+	"github.com/hyepartners-gmail/HOA-Management-App/backend/models"
+	"github.com/hyepartners-gmail/HOA-Management-App/backend/utils"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 )
 
 func GetOwners(w http.ResponseWriter, r *http.Request) {
-	owners := models.GetAllOwners()
+	owners, err := models.GetAllOwners()
+	if err != nil {
+		utils.JSONError(w, "Failed to load owners", http.StatusInternalServerError)
+		return
+	}
 	json.NewEncoder(w).Encode(owners)
 }
 
@@ -42,11 +47,11 @@ func CreateOwner(w http.ResponseWriter, r *http.Request) {
 		userID := uuid.New()
 		passwordResetToken := utils.GenerateResetToken() // assume secure token gen
 		user := models.User{
-			ID:                 userID,
+			ID:                 userID.String(),
 			Email:              input.Email,
 			HashedPassword:     "", // blank for now
 			Role:               "cabin_owner",
-			AssociatedOwnerID:  ownerID,
+			AssociatedOwnerID:  ownerID.String(),
 			PasswordResetToken: passwordResetToken,
 		}
 		if err := models.SaveUser(user); err != nil {

@@ -4,10 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/hyepartners-gmail/HOA-Management-App/backend/utils"
-
 	"cloud.google.com/go/datastore"
 	"github.com/google/uuid"
+	ds "github.com/hyepartners-gmail/HOA-Management-App/backend/datastore"
 )
 
 type ServiceRequest struct {
@@ -21,7 +20,7 @@ type ServiceRequest struct {
 
 func SaveServiceRequest(req ServiceRequest) error {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 	key := datastore.NameKey("ServiceRequest", req.ID.String(), nil)
 	_, err := client.Put(ctx, key, &req)
 	return err
@@ -29,7 +28,7 @@ func SaveServiceRequest(req ServiceRequest) error {
 
 func GetAllServiceRequests() ([]*ServiceRequest, error) {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 
 	var results []*ServiceRequest
 	query := datastore.NewQuery("ServiceRequest").Order("-created_at")
@@ -39,7 +38,7 @@ func GetAllServiceRequests() ([]*ServiceRequest, error) {
 
 func UpdateServiceRequestStatus(id string, status string) error {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 
 	key := datastore.NameKey("ServiceRequest", id, nil)
 	var req ServiceRequest

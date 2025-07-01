@@ -6,26 +6,26 @@ import (
 	"os"
 
 	"github.com/hyepartners-gmail/HOA-Management-App/backend/handlers"
-	"github.com/hyepartners-gmail/HOA-Management-App/backend/middleware/auth"
+	"github.com/hyepartners-gmail/HOA-Management-App/backend/middleware"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
+	chimw "github.com/go-chi/chi/v5/middleware"
 )
 
 func main() {
 	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
+	r.Use(chimw.Logger)
+	r.Use(chimw.Recoverer)
 
 	// API routes
 	r.Route("/api", func(r chi.Router) {
-		r.Use(auth.JWTAuthMiddleware)
+		r.Use(middleware.JWTMiddleware)
 
 		// Auth routes (no middleware inside these handlers)
 		r.Group(func(r chi.Router) {
 			r.Post("/login", handlers.LoginHandler)
-			r.Post("/reset-password-request", handlers.RequestPasswordReset)
-			r.Post("/reset-password", handlers.SubmitPasswordReset)
+			r.Post("/reset-password-request", handlers.PasswordResetRequestHandler)
+			r.Post("/reset-password", handlers.PasswordResetHandler)
 		})
 
 		// User + Cabin

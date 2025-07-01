@@ -1,34 +1,48 @@
+// models/store.go
 package models
 
-func SavePost(p *Post) error {
-	return saveToDatastore(p, "posts", p.ID.String())
+import (
+	"context"
+
+	"cloud.google.com/go/datastore"
+	ds "github.com/hyepartners-gmail/HOA-Management-App/backend/datastore"
+)
+
+// Save any entity to Datastore
+func saveToDatastore(entity interface{}, kind string, id string) error {
+	ctx := context.Background()
+	client := ds.GetClient(ctx)
+	key := datastore.NameKey(kind, id, nil)
+	_, err := client.Put(ctx, key, entity)
+	return err
 }
 
-func GetAllPosts(category string) ([]Post, error) {
-	// Optional: filter by category
-	// Otherwise sort by CreatedAt descending
+// Load entity by ID
+func loadFromDatastore(dst interface{}, kind string, id string) error {
+	ctx := context.Background()
+	client := ds.GetClient(ctx)
+	key := datastore.NameKey(kind, id, nil)
+	return client.Get(ctx, key, dst)
 }
 
-func SaveComment(c *Comment) error {
-	return saveToDatastore(c, "comments", c.ID.String())
+// Delete entity by ID
+func deleteFromDatastore(kind string, id string) error {
+	ctx := context.Background()
+	client := ds.GetClient(ctx)
+	key := datastore.NameKey(kind, id, nil)
+	return client.Delete(ctx, key)
 }
 
-func GetCommentsForPost(postID string) ([]Comment, error) {
-	// Query comments where post_id = postID, sort by CreatedAt asc
-}
+// Delete entities by field value (e.g., delete all comments by post_id)
+func deleteByField(kind string, field string, value string) error {
+	ctx := context.Background()
+	client := ds.GetClient(ctx)
 
-func GetPostByID(id string) (*Post, error) {
-	var post Post
-	err := loadFromDatastore(&post, "posts", id)
-	return &post, err
-}
+	query := datastore.NewQuery(kind).Filter(field+" =", value).KeysOnly()
+	keys, err := client.GetAll(ctx, query, nil)
+	if err != nil {
+		return err
+	}
 
-func DeletePost(id string) error {
-	return deleteFromDatastore("posts", id)
-}
-
-func DeleteCommentsForPost(postID string) error {
-	// Query comments by post_id and delete each
-	// This is optional cleanup
-	return deleteByField("comments", "post_id", postID)
+	return client.DeleteMulti(ctx, keys)
 }

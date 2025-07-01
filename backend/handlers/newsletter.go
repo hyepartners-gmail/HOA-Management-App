@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"encoding/json"
@@ -32,11 +32,17 @@ func CreateNewsletterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	uuidVal, err := uuid.Parse(user.ID)
+	if err != nil {
+		utils.JSONError(w, "invalid user ID", http.StatusInternalServerError)
+		return
+	}
+
 	newsletter := &models.Newsletter{
 		ID:              uuid.New(),
 		Title:           payload.Title,
 		Body:            payload.Body,
-		CreatedByUserID: user.ID,
+		CreatedByUserID: uuidVal,
 	}
 
 	if err := models.SaveNewsletter(newsletter); err != nil {
@@ -50,7 +56,6 @@ func CreateNewsletterHandler(w http.ResponseWriter, r *http.Request) {
 
 func PublishNewsletterHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
-	user := r.Context().Value("user").(*models.User)
 
 	n, err := models.GetNewsletterByID(id)
 	if err != nil {

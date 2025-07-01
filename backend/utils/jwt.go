@@ -2,6 +2,8 @@
 package utils
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"errors"
 	"time"
 
@@ -41,4 +43,13 @@ func ValidateJWT(tokenStr string) (*JWTClaims, error) {
 		return nil, errors.New("invalid token")
 	}
 	return claims, nil
+}
+
+// GenerateResetToken creates a secure random 32-byte hex string
+func GenerateResetToken() string {
+	bytes := make([]byte, 32)
+	if _, err := rand.Read(bytes); err != nil {
+		panic("failed to generate secure token") // or log and return fallback
+	}
+	return hex.EncodeToString(bytes)
 }

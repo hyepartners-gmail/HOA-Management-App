@@ -4,10 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/hyepartners-gmail/HOA-Management-App/backend/utils"
-
 	"cloud.google.com/go/datastore"
 	"github.com/google/uuid"
+	ds "github.com/hyepartners-gmail/HOA-Management-App/backend/datastore"
 )
 
 type AuditLog struct {
@@ -22,7 +21,7 @@ type AuditLog struct {
 
 func LogAction(log AuditLog) error {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 
 	log.ID = uuid.New()
 	log.Timestamp = time.Now()
@@ -33,7 +32,7 @@ func LogAction(log AuditLog) error {
 
 func ListAuditLogs(limit int) ([]AuditLog, error) {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 
 	q := datastore.NewQuery("AuditLog").Order("-Timestamp").Limit(limit)
 	var logs []AuditLog

@@ -4,10 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/hyepartners-gmail/backend/utils"
-
 	"cloud.google.com/go/datastore"
 	"github.com/google/uuid"
+	ds "github.com/hyepartners-gmail/HOA-Management-App/backend/datastore"
 )
 
 type FAQ struct {
@@ -20,7 +19,7 @@ type FAQ struct {
 
 func SaveFAQ(f FAQ) error {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 	key := datastore.NameKey("FAQ", f.ID.String(), nil)
 	_, err := client.Put(ctx, key, &f)
 	return err
@@ -28,7 +27,7 @@ func SaveFAQ(f FAQ) error {
 
 func GetAllFAQs() ([]*FAQ, error) {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 	var faqs []*FAQ
 	query := datastore.NewQuery("FAQ").Order("title")
 	_, err := client.GetAll(ctx, query, &faqs)

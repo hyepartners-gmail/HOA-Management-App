@@ -20,7 +20,12 @@ func CreateNotificationHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	n.ID = uuid.New()
-	n.CreatedByUserID = user.ID
+	uid, err := uuid.Parse(user.ID)
+	if err != nil {
+		utils.JSONError(w, "invalid user ID", http.StatusInternalServerError)
+		return
+	}
+	n.CreatedByUserID = uid
 	n.CreatedAt = time.Now()
 
 	if err := models.SaveNotification(&n); err != nil {

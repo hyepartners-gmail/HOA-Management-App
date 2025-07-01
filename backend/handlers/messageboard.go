@@ -31,7 +31,7 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	p.ID = uuid.New()
 	p.CreatedAt = time.Now()
-	p.CreatedByUser = user.ID
+	p.CreatedByUser = uuid.MustParse(user.ID)
 
 	if err := models.SavePost(&p); err != nil {
 		utils.JSONError(w, "failed to save post", http.StatusInternalServerError)
@@ -61,7 +61,7 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	c.ID = uuid.New()
 	c.PostID = uuid.MustParse(postID)
-	c.UserID = user.ID
+	c.UserID = uuid.MustParse(user.ID)
 	c.CreatedAt = time.Now()
 
 	if err := models.SaveComment(&c); err != nil {
@@ -80,8 +80,7 @@ func DeletePostHandler(w http.ResponseWriter, r *http.Request) {
 		utils.JSONError(w, "post not found", http.StatusNotFound)
 		return
 	}
-
-	if post.CreatedByUser != user.ID {
+	if post.CreatedByUser != uuid.MustParse(user.ID) {
 		utils.JSONError(w, "forbidden", http.StatusForbidden)
 		return
 	}

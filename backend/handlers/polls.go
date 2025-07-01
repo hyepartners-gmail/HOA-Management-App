@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/hyepartners-gmail/HOA-Management-App/backend/models"
 	"github.com/hyepartners-gmail/HOA-Management-App/backend/utils"
 
@@ -41,7 +42,7 @@ func CreatePollHandler(w http.ResponseWriter, r *http.Request) {
 		Audience:  payload.Audience,
 		StartDate: payload.StartDate,
 		EndDate:   payload.EndDate,
-		CreatedBy: user.ID,
+		CreatedBy: uuid.MustParse(user.ID),
 	}
 
 	if err := models.CreatePoll(p); err != nil {
@@ -82,7 +83,7 @@ func SubmitVoteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	voted, err := models.HasVoted(pollID, user.ID)
+	voted, err := models.HasVoted(pollID, uuid.MustParse(user.ID))
 	if err != nil {
 		utils.JSONError(w, "error checking vote", http.StatusInternalServerError)
 		return
@@ -94,7 +95,7 @@ func SubmitVoteHandler(w http.ResponseWriter, r *http.Request) {
 
 	vote := models.Vote{
 		PollID: pollID,
-		UserID: user.ID,
+		UserID: uuid.MustParse(user.ID),
 		Choice: body.Choice,
 	}
 

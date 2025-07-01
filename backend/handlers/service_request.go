@@ -21,7 +21,7 @@ func SubmitServiceRequestHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req.ID = uuid.New()
-	req.SubmittedByUserID = user.ID
+	req.SubmittedByUserID = uuid.MustParse(user.ID)
 	req.CreatedAt = time.Now()
 	req.Status = "open"
 

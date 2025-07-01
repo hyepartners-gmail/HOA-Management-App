@@ -4,10 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/hyepartners-gmail/HOA-Management-App/backend/utils"
-
 	"cloud.google.com/go/datastore"
 	"github.com/google/uuid"
+	ds "github.com/hyepartners-gmail/HOA-Management-App/backend/datastore"
 )
 
 type Poll struct {
@@ -29,7 +28,7 @@ type Vote struct {
 
 func CreatePoll(p Poll) error {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 
 	p.ID = uuid.New()
 	key := datastore.NameKey("Poll", p.ID.String(), nil)
@@ -39,7 +38,7 @@ func CreatePoll(p Poll) error {
 
 func SubmitVote(v Vote) error {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 
 	key := datastore.NameKey("Vote", v.PollID+"_"+v.UserID.String(), nil)
 	v.SubmittedAt = time.Now()
@@ -49,7 +48,7 @@ func SubmitVote(v Vote) error {
 
 func HasVoted(pollID string, userID uuid.UUID) (bool, error) {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 
 	var v Vote
 	key := datastore.NameKey("Vote", pollID+"_"+userID.String(), nil)
@@ -62,7 +61,7 @@ func HasVoted(pollID string, userID uuid.UUID) (bool, error) {
 
 func GetPollsForUser(audience string) ([]Poll, error) {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 
 	now := time.Now()
 	q := datastore.NewQuery("Poll").
@@ -78,7 +77,7 @@ func GetPollsForUser(audience string) ([]Poll, error) {
 
 func GetVotesByPollID(pollID string) ([]Vote, error) {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 
 	q := datastore.NewQuery("Vote").Filter("PollID =", pollID)
 	var results []Vote

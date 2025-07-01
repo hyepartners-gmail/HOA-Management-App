@@ -4,10 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/hyepartners-gmail/HOA-Management-App/backend/utils"
-
 	"cloud.google.com/go/datastore"
 	"github.com/google/uuid"
+	ds "github.com/hyepartners-gmail/HOA-Management-App/backend/datastore"
 )
 
 type TalentCategory string
@@ -38,7 +37,7 @@ type TalentListing struct {
 
 func SaveTalentListing(listing TalentListing) error {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 	key := datastore.NameKey("TalentListing", listing.ID.String(), nil)
 	_, err := client.Put(ctx, key, &listing)
 	return err
@@ -46,7 +45,7 @@ func SaveTalentListing(listing TalentListing) error {
 
 func GetApprovedTalentListings() ([]*TalentListing, error) {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 	var listings []*TalentListing
 	query := datastore.NewQuery("TalentListing").Filter("is_approved =", true).Order("category").Order("name")
 	_, err := client.GetAll(ctx, query, &listings)
@@ -55,7 +54,7 @@ func GetApprovedTalentListings() ([]*TalentListing, error) {
 
 func GetAllTalentListings() ([]*TalentListing, error) {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 	var listings []*TalentListing
 	query := datastore.NewQuery("TalentListing").Order("-created_at")
 	_, err := client.GetAll(ctx, query, &listings)
@@ -64,7 +63,7 @@ func GetAllTalentListings() ([]*TalentListing, error) {
 
 func ApproveTalentListing(id string, approved bool) error {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 	key := datastore.NameKey("TalentListing", id, nil)
 
 	var listing TalentListing

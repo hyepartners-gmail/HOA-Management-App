@@ -4,10 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/hyepartners-gmail/HOA-Management-App/backend/utils"
-
 	"cloud.google.com/go/datastore"
 	"github.com/google/uuid"
+	ds "github.com/hyepartners-gmail/HOA-Management-App/backend/datastore"
 )
 
 type Document struct {
@@ -15,14 +14,14 @@ type Document struct {
 	Title      string    `datastore:"title" json:"title"`
 	Category   string    `datastore:"category" json:"category"`
 	URL        string    `datastore:"url" json:"url"`
-	VisibleTo  string    `datastore:"visible_to" json:"visible_to"` // e.g. "admin", "board", "owners", "public"
-	UploadedBy uuid.UUID `datastore:"uploaded_by" json:"uploaded_by"`
+	VisibleTo  string    `datastore:"visible_to" json:"visible_to"`
+	UploadedBy string    `datastore:"uploaded_by" json:"uploaded_by"` // <- updated
 	UploadedAt time.Time `datastore:"uploaded_at" json:"uploaded_at"`
 }
 
 func SaveDocument(doc Document) error {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 
 	key := datastore.NameKey("Document", doc.ID.String(), nil)
 	_, err := client.Put(ctx, key, &doc)
@@ -31,7 +30,7 @@ func SaveDocument(doc Document) error {
 
 func ListDocuments(role string) ([]Document, error) {
 	ctx := context.Background()
-	client := utils.GetDatastoreClient(ctx)
+	client := ds.GetClient(ctx)
 
 	q := datastore.NewQuery("Document").Order("-UploadedAt").Filter("VisibleTo >=", role)
 

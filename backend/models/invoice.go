@@ -1,9 +1,13 @@
-package main
+package models
 
 import (
+	"context"
 	"time"
 
+	"cloud.google.com/go/datastore"
+
 	"github.com/google/uuid"
+	ds "github.com/hyepartners-gmail/HOA-Management-App/backend/datastore"
 )
 
 // InvoiceStatus represents the current state of the invoice.
@@ -40,4 +44,100 @@ type Invoice struct {
 	PaymentMethod   PaymentMethod `datastore:"payment_method" json:"payment_method"`
 	PaidAt          *time.Time    `datastore:"paid_at" json:"paid_at,omitempty"`
 	Notes           string        `datastore:"notes" json:"notes,omitempty"`
+	CreatedAt       time.Time     `datastore:"created_at" json:"created_at"` // Add this
+}
+
+func GetAllInvoices() []*Invoice {
+	ctx := context.Background()
+	client := ds.GetClient(ctx)
+
+	var invoices []*Invoice
+	_, _ = client.GetAll(ctx, datastore.NewQuery("Invoice").Order("-due_date"), &invoices)
+	return invoices
+}
+
+func GetInvoiceByID(id string) (*Invoice, error) {
+	ctx := context.Background()
+	client := ds.GetClient(ctx)
+
+	key, err := datastore.DecodeKey(id)
+	if err != nil {
+		return nil, err
+	}
+
+	var invoice Invoice
+	if err := client.Get(ctx, key, &invoice); err != nil {
+		return nil, err
+	}
+	return &invoice, nil
+}
+
+func SaveInvoice(inv Invoice) error {
+	ctx := context.Background()
+	client := ds.GetClient(ctx)
+
+	key := datastore.NameKey("Invoice", inv.ID.String(), nil)
+	_, err := client.Put(ctx, key, &inv)
+	return err
+}
+
+type ManualPaymentUpdate struct {
+	PaymentDate time.Time
+	Method      PaymentMethod
+	Notes       string
+}
+
+func UpdateInvoicePayment(invoiceID string, update ManualPaymentUpdate) error {
+	ctx := context.Background()
+	client := ds.GetClient(ctx)
+
+	key := datastore.NameKey("Invoice", invoiceID, nil)
+	var invoice Invoice
+	if err := client.Get(ctx, key, &invoice); err != nil {
+		return err
+	}
+
+	invoice.PaymentMethod = update.Method
+	invoice.PaidAt = &update.PaymentDate
+	invoice.Notes = update.Notes
+	invoice.Status = InvoicePaid
+
+	_, err := client.Put(ctx, key, &invoice)
+	return err
+}
+
+func GenerateQuarterlyInvoices() error {
+	ctx := context.Background()
+	client := ds.GetClient(ctx)
+
+	// Placeholder logic: generate one invoice per active cabin
+	var cabins []*Cabin
+	_, err := client.GetAll(ctx, datastore.NewQuery("Cabin").Filter("is_active =", true), &cabins)
+	if err != nil {
+		return err
+	}
+
+	now := time.Now()
+	start := time.Date(now.Year(), now.Month()-3, 1, 0, 0, 0, 0, time.UTC)
+	end := now
+
+	for _, cabin := range cabins {
+		inv := Invoice{
+			ID:              uuid.New(),
+			CabinID:         uuid.MustParse(cabin.ID),
+			OwnerID:         uuid.MustParse(cabin.PrimaryOwnerID),
+			PeriodStartDate: start,
+			PeriodEndDate:   end,
+			AmountDue:       500.00, // example static rate
+			DueDate:         end.AddDate(0, 0, 30),
+			Status:          InvoiceDraft,
+			CreatedAt:       time.Now(),
+		}
+		key := datastore.NameKey("Invoice", inv.ID.String(), nil)
+		if _, err := client.Put(ctx, key, &inv); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

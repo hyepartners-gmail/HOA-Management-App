@@ -38,12 +38,13 @@ func TriggerAssessmentHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetMyAssessmentsHandler(w http.ResponseWriter, r *http.Request) {
 	user := r.Context().Value("user").(*models.User)
-	if user.AssociatedOwnerID == nil {
+
+	if user.AssociatedOwnerID == "" {
 		utils.JSONError(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
-	assessments, err := models.GetAssessmentsByOwnerID(*user.AssociatedOwnerID)
+	assessments, err := models.GetAssessmentsByOwnerID(user.AssociatedOwnerID)
 	if err != nil {
 		utils.JSONError(w, "Failed to load assessments", http.StatusInternalServerError)
 		return

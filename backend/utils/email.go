@@ -37,3 +37,9 @@ func SendNewsletterToAllOwners(subject, body string) {
 		}
 	}
 }
+
+func SendWelcomeEmail(email string, token string) error {
+	// TODO: Implement actual email sending logic here.
+	fmt.Printf("Sending welcome email to %s with token: %s\n", email, token)
+	return nil
+}

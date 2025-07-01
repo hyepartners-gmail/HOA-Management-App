@@ -1,16 +1,21 @@
 package handlers
 
 import (
-	"backend/utils"
 	"encoding/json"
-	"hoa/models"
 	"net/http"
+
+	"github.com/hyepartners-gmail/HOA-Management-App/backend/models"
+	"github.com/hyepartners-gmail/HOA-Management-App/backend/utils"
 
 	"github.com/go-chi/chi/v5"
 )
 
 func GetCabins(w http.ResponseWriter, r *http.Request) {
-	cabins := models.GetAllCabins()
+	cabins, err := models.GetAllCabins()
+	if err != nil {
+		utils.JSONError(w, "Failed to load cabins", http.StatusInternalServerError)
+		return
+	}
 	json.NewEncoder(w).Encode(cabins)
 }
 
@@ -38,6 +43,10 @@ func UpdateCabin(w http.ResponseWriter, r *http.Request) {
 
 func GetCabinByID(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
-	cabin := models.FindCabinByID(id)
+	cabin, err := models.FindCabinByID(id)
+	if err != nil {
+		utils.JSONError(w, "Cabin not found", http.StatusNotFound)
+		return
+	}
 	json.NewEncoder(w).Encode(cabin)
 }

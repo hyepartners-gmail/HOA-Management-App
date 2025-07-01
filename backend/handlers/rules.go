@@ -32,7 +32,7 @@ func UpdateHOARulesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	updated.LastUpdatedBy = user.ID.String()
+	updated.LastUpdatedBy = user.ID
 
 	if err := models.SaveHOARules(updated); err != nil {
 		utils.JSONError(w, "Failed to save HOA rules", http.StatusInternalServerError)
