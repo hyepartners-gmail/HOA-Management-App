@@ -22,10 +22,10 @@ docker push "$IMAGE_TAG"
 
 # ---- DEPLOY TO CLOUD RUN ----
 echo "🌐 Deploying to Cloud Run..."
-gcloud run deploy "$SERVICE_NAME" \
+gcloud run deploy hoamanager \
   --image="$IMAGE_TAG" \
   --platform=managed \
-  --region="$REGION" \
+  --region=us-central1 \
   --allow-unauthenticated
 
 echo "✅ Deployment complete."

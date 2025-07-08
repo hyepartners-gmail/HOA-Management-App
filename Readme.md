@@ -80,17 +80,13 @@ GCS_BUCKET_NAME=...
 
 ## 🐳 Deployment on Google Cloud Run
 
-This project is designed to be deployed as a **single container** on Cloud Run.
+This project is deployed as a **single container** on Cloud Run.
 
-### Dockerfile already included
-
-Build + deploy:
+### 🔁 One-command Deployment
 
 ```bash
-gcloud run deploy bearpaw-app \
-  --source . \
-  --region us-west1 \
-  --allow-unauthenticated
+chmod +x deploy.sh
+./deploy.sh
 ```
 
 ---

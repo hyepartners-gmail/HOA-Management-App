@@ -21,7 +21,7 @@ COPY backend ./backend
 COPY --from=frontend /app/frontend/dist ./frontend_dist
 
 # Build Go binary
-RUN go build -o server ./backend
+RUN GOOS=linux GOARCH=amd64 go build -o server ./backend
 
 # ---------- Final Image ----------
 FROM gcr.io/distroless/base-debian12
