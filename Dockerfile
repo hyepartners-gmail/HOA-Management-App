@@ -1,20 +1,26 @@
 # ---------- Build Frontend ----------
-FROM node:20 AS frontend
-WORKDIR /app
-COPY frontend ./frontend
+FROM node:24-slim AS frontend
 WORKDIR /app/frontend
+COPY frontend/package*.json ./
 RUN npm ci
+COPY frontend ./
 RUN npm run build
 
-# ---------- Build Backend ----------
-FROM golang:1.22 AS backend
+# -# ---------- Build Backend ----------
+FROM golang:1.24 AS backend
 WORKDIR /app
-COPY go.mod go.sum ./
+
+# Copy go.mod + go.sum from root (not inside /backend)
+COPY ./go.mod ./go.sum ./
 RUN go mod download
 
+# Copy actual source code from ./backend
 COPY backend ./backend
+
+# Also copy frontend build artifacts
 COPY --from=frontend /app/frontend/dist ./frontend_dist
 
+# Build Go binary
 RUN go build -o server ./backend
 
 # ---------- Final Image ----------

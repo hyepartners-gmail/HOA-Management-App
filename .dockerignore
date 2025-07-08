@@ -1,0 +1,31 @@
+# --- Node + Frontend ---
+frontend/node_modules
+frontend/dist
+frontend/.vite
+frontend/.eslintcache
+frontend/.cache
+frontend/coverage
+
+# --- Editor + Local Only Files ---
+**/.DS_Store
+**/Thumbs.db
+**/.idea
+**/.vscode
+**/.env
+**/.env.*
+
+# --- Logs + Build Artifacts ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Git ---
+.git
+.gitignore
+.gitattributes
+
+# --- Optional test ignores ---
+**/__tests__/
+**/*.spec.*
+**/*.test.*
