@@ -89,6 +89,14 @@ chmod +x deploy.sh
 ./deploy.sh
 ```
 
+This will:
+- Build the Docker image locally
+- Tag it and push to Artifact Registry
+- Deploy it to Cloud Run under the hoamanager service
+
+Make sure you're authenticated with GCP (gcloud auth login) and have configured the correct project.
+- Requires Docker, gcloud, and permissions to push to Artifact Registry + deploy Cloud Run services.
+
 ---
 
 ## 🧪 Testing
