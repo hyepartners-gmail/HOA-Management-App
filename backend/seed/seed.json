@@ -1,0 +1,811 @@
+{
+  "owners": {
+    "static": [
+      {
+        "id": "admin_user",
+        "full_name": "Admin User",
+        "email": "admin@bp.com",
+        "phone": "555-000-0000",
+        "mailing_address": "Admin HQ, Bear Paw, NC",
+        "cabin_ids": [],
+        "login_enabled": true
+      },
+      {
+        "id": "president_user",
+        "full_name": "Peter President",
+        "email": "president@bp.com",
+        "phone": "555-100-0000",
+        "mailing_address": "President's Office, Bear Paw, NC",
+        "cabin_ids": [],
+        "login_enabled": true
+      },
+      {
+        "id": "secretary_user",
+        "full_name": "Sarah Secretary",
+        "email": "secretary@bp.com",
+        "phone": "555-200-0000",
+        "mailing_address": "Secretary's Office, Bear Paw, NC",
+        "cabin_ids": [],
+        "login_enabled": true
+      },
+      {
+        "id": "treasurer_user",
+        "full_name": "Tina Treasurer",
+        "email": "treasurer@bp.com",
+        "phone": "555-300-0000",
+        "mailing_address": "Treasurer's Office, Bear Paw, NC",
+        "cabin_ids": [],
+        "login_enabled": true
+      },
+      {
+        "id": "owner_adam",
+        "full_name": "Adam New-Waterson",
+        "email": "adam@bp.com",
+        "phone": "555-134-0000",
+        "mailing_address": "134 Cabin Rd, Bear Paw, NC",
+        "cabin_ids": ["cabin134"],
+        "login_enabled": true
+      }
+    ],
+    "generated": {
+      "id_pattern": "owner{index}",
+      "full_name_pattern": "Cabin Owner {index}",
+      "email_pattern": "owner{index}@bp.com",
+      "phone_pattern": "555-400-{index_padded}",
+      "mailing_address_pattern": "Address {index}, Bear Paw, NC",
+      "cabin_ids": [],
+      "login_enabled": true,
+      "start_index": 1,
+      "count": 41,
+      "index_padding": 4
+    }
+  },
+  "cabins": {
+    "generated": {
+      "count": 42,
+      "number_start": 100,
+      "step": 2,
+      "id_pattern": "cabin{number}",
+      "label_pattern": "Cabin {number}",
+      "bedroom_count": 2,
+      "share_count": 2,
+      "owners": ["{primary_owner_id}"],
+      "primary_owner_logic": {
+        "special_number": 134,
+        "special_owner_id": "owner_adam",
+        "generic_owner_start_index": 1
+      },
+      "is_active": true
+    }
+  }
+},
+{
+  "invoices": [
+    {
+      "id": "inv001",
+      "cabin_id": "cabin100",
+      "owner_id": "owner1",
+      "period_start_date": "2023-01-01",
+      "period_end_date": "2023-03-31",
+      "amount_due": 200.00,
+      "due_date": "2023-02-01",
+      "status": "PAID",
+      "late_fee_applied": false,
+      "pdf_url": "/mock-invoice-001.pdf",
+      "payment_method": "STRIPE",
+      "payment_timestamp": "2023-01-25T10:00:00Z"
+    },
+    {
+      "id": "inv002",
+      "cabin_id": "cabin102",
+      "owner_id": "owner2",
+      "period_start_date": "2023-01-01",
+      "period_end_date": "2023-03-31",
+      "amount_due": 400.00,
+      "due_date": "2023-02-01",
+      "status": "SENT",
+      "late_fee_applied": false,
+      "pdf_url": "/mock-invoice-002.pdf",
+      "payment_method": null,
+      "payment_timestamp": null
+    },
+    {
+      "id": "inv003",
+      "cabin_id": "cabin100",
+      "owner_id": "owner1",
+      "period_start_date": "2023-04-01",
+      "period_end_date": "2023-06-30",
+      "amount_due": 200.00,
+      "due_date": "2023-05-01",
+      "status": "SENT",
+      "late_fee_applied": false,
+      "pdf_url": "/mock-invoice-003.pdf",
+      "payment_method": null,
+      "payment_timestamp": null
+    },
+    {
+      "id": "inv004",
+      "cabin_id": "cabin134",
+      "owner_id": "owner_adam",
+      "period_start_date": "2023-04-01",
+      "period_end_date": "2023-06-30",
+      "amount_due": 100.00,
+      "due_date": "2023-05-01",
+      "status": "LATE",
+      "late_fee_applied": true,
+      "pdf_url": "/mock-invoice-004.pdf",
+      "payment_method": null,
+      "payment_timestamp": null,
+      "notes": "Late fee applied due to overdue payment."
+    },
+    {
+      "id": "inv005",
+      "cabin_id": "cabin102",
+      "owner_id": "owner2",
+      "period_start_date": "2023-04-01",
+      "period_end_date": "2023-06-30",
+      "amount_due": 400.00,
+      "due_date": "2023-05-01",
+      "status": "PAID",
+      "late_fee_applied": false,
+      "pdf_url": "/mock-invoice-005.pdf",
+      "payment_method": "CHECK",
+      "payment_timestamp": "2023-05-15T12:30:00Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "notif001",
+      "title": "Welcome to the Portal!",
+      "body": "We're excited to have you here. Explore the new features.",
+      "audience": "ALL",
+      "notification_type": "NORMAL",
+      "delivery_method": "EMAIL",
+      "created_by_user_id": "admin@bp.com",
+      "created_at": "2023-10-26T10:00:00Z",
+      "expires_at": null
+    },
+    {
+      "id": "notif002",
+      "title": "Urgent: Water Shutoff Notice",
+      "body": "The water supply to all cabins will be temporarily shut off on November 1st from 9 AM to 1 PM for maintenance. Please plan accordingly.",
+      "audience": "OWNERS_ONLY",
+      "notification_type": "FLASH",
+      "delivery_method": "BOTH",
+      "created_by_user_id": "president@bp.com",
+      "created_at": "2023-10-28T14:30:00Z",
+      "expires_at": "2023-11-01T13:00:00Z"
+    },
+    {
+      "id": "notif003",
+      "title": "Board Meeting Minutes Available",
+      "body": "The minutes from the last board meeting on October 20th are now available in the documents section.",
+      "audience": "BOARD_ONLY",
+      "notification_type": "NORMAL",
+      "delivery_method": "EMAIL",
+      "created_by_user_id": "secretary@bp.com",
+      "created_at": "2023-10-29T09:00:00Z",
+      "expires_at": null
+    },
+    {
+      "id": "notif004",
+      "title": "New Billing Cycle Started",
+      "body": "The quarterly billing cycle has begun. New invoices will be generated and sent out shortly.",
+      "audience": "TREASURER",
+      "notification_type": "NORMAL",
+      "delivery_method": "EMAIL",
+      "created_by_user_id": "admin@bp.com",
+      "created_at": "2023-11-01T08:00:00Z",
+      "expires_at": null
+    }
+  ],
+  "newsletters": [
+    {
+      "id": "news001",
+      "title": "Q1 2023 Community Update",
+      "body": "## Spring is in the Air!\n\nDear Cabin Owners,\n\nWe hope this newsletter finds you well. As we welcome spring, we have a few important updates to share...\n\n* **Road Maintenance:** We've completed the repairs on the main access road.\n* **Upcoming Events:** Look out for our annual community picnic in June!\n\nBest regards,\nThe Board",
+      "published_at": "2023-03-15T10:00:00Z",
+      "created_by_user_id": "president@bp.com",
+      "created_at": "2023-03-10T09:00:00Z",
+      "status": "published"
+    },
+    {
+      "id": "news002",
+      "title": "Q2 2023 Summer Newsletter (Draft)",
+      "body": "## Summer Preparations\n\nHello everyone,\n\nThis is a draft for our Q2 newsletter. Please review and provide feedback.\n\n* **Fire Safety:** Reminder to clear brush around your cabins.\n* **Water Usage:** Please be mindful of water consumption during dry months.\n\nThanks,\n[Your Name]",
+      "published_at": null,
+      "created_by_user_id": "secretary@bp.com",
+      "created_at": "2023-06-01T11:00:00Z",
+      "status": "draft"
+    }
+  ]
+},
+{
+  "posts": [
+    {
+      "id": "post001",
+      "title": "Seeking Advice on Cabin Winterization",
+      "body": "Hi everyone, I'm new to cabin ownership and looking for tips on winterizing my cabin. Any advice on pipes, insulation, or general best practices would be greatly appreciated!",
+      "category": "MAINTENANCE",
+      "post_type": "QUESTION",
+      "created_by_user_id": "adam@bp.com",
+      "created_at": "2023-11-01T10:00:00Z",
+      "comments": [
+        {
+          "id": "comment001",
+          "post_id": "post001",
+          "body": "Make sure to drain all water lines and add antifreeze to traps!",
+          "created_by_user_id": "owner1@bp.com",
+          "created_at": "2023-11-01T11:00:00Z"
+        },
+        {
+          "id": "comment002",
+          "post_id": "post001",
+          "body": "I also recommend checking your roof for any potential leaks before the snow hits.",
+          "created_by_user_id": "owner2@bp.com",
+          "created_at": "2023-11-01T12:30:00Z"
+        }
+      ]
+    },
+    {
+      "id": "post002",
+      "title": "Community Potluck Next Saturday!",
+      "body": "Just a friendly reminder that our annual community potluck is scheduled for next Saturday, November 11th, at the main lodge. Please bring your favorite dish to share!",
+      "category": "EVENTS",
+      "post_type": "ANNOUNCEMENT",
+      "created_by_user_id": "president@bp.com",
+      "created_at": "2023-11-03T09:00:00Z",
+      "comments": []
+    },
+    {
+      "id": "post003",
+      "title": "Lost Dog - Small Terrier Mix",
+      "body": "Our dog, 'Buddy', went missing near Cabin 134 yesterday evening. He's a small terrier mix, very friendly. If you see him, please call Adam at 555-134-0000.",
+      "category": "LOST_FOUND",
+      "post_type": "ALERT",
+      "created_by_user_id": "adam@bp.com",
+      "created_at": "2023-11-04T15:00:00Z",
+      "comments": []
+    }
+  ],
+  "hoa_rules": [
+    {
+      "id": "rule001",
+      "title": "Renovation Rules & Setbacks",
+      "content": "**Setback:** Minimum 20 feet from property lines.\n**Materials:** natural wood, stone, non-reflective metal.\n**Height:** max 35 feet.",
+      "last_updated_at": "2023-01-15T09:00:00Z",
+      "updated_by_user_id": "admin@bp.com"
+    },
+    {
+      "id": "rule002",
+      "title": "Approved Exterior Paint Colors",
+      "content": "Allowed colors: Forest Green (#228B22), Cabin Brown (#8B4513), Stone Gray (#808080), Mountain Blue (#4682B4).",
+      "last_updated_at": "2023-03-20T14:00:00Z",
+      "updated_by_user_id": "admin@bp.com"
+    },
+    {
+      "id": "rule003",
+      "title": "Approved Shingle Types",
+      "content": "Only fire-resistant asphalt or metal shingles; wood shake prohibited. Brands: GAF Timberline, Owens Corning Duration.",
+      "last_updated_at": "2023-05-10T11:00:00Z",
+      "updated_by_user_id": "admin@bp.com"
+    },
+    {
+      "id": "rule004",
+      "title": "General Bylaws Overview",
+      "content": "Covers noise, pets, waste disposal, common-area use. See full bylaws for details.",
+      "last_updated_at": "2023-07-01T16:00:00Z",
+      "updated_by_user_id": "admin@bp.com"
+    }
+  ],
+  "proxy_assignments": [
+    {
+      "id": "proxy001",
+      "from_owner_id": "owner_adam",
+      "to_owner_id": "owner1",
+      "to_office": null,
+      "meeting_date": null,
+      "is_one_time": false,
+      "created_at": "2023-01-01T08:00:00Z",
+      "expires_at": null
+    },
+    {
+      "id": "proxy002",
+      "from_owner_id": "owner2",
+      "to_owner_id": null,
+      "to_office": "PRESIDENT",
+      "meeting_date": "2023-12-15T10:00:00Z",
+      "is_one_time": true,
+      "created_at": "2023-12-01T09:00:00Z",
+      "expires_at": "2023-12-15T12:00:00Z"
+    }
+  ],
+  "agenda_requests": [
+    {
+      "id": "agenda001",
+      "submitted_by_owner_id": "owner_adam",
+      "subject": "Proposal for new community sign",
+      "description": "I would like to propose the installation of a new, more visible community sign at the main entrance. I have designs and cost estimates to present.",
+      "requested_meeting_date": "2024-01-20T14:00:00Z",
+      "status": "pending",
+      "created_at": "2023-11-10T10:00:00Z"
+    },
+    {
+      "id": "agenda002",
+      "submitted_by_owner_id": "owner2",
+      "subject": "Discussion on road maintenance budget",
+      "description": "Given the recent wear and tear, I'd like to discuss increasing the budget allocation for road maintenance in the upcoming fiscal year.",
+      "requested_meeting_date": null,
+      "status": "reviewed",
+      "created_at": "2023-11-15T11:30:00Z"
+    }
+  ],
+  "meeting_minutes": [
+    {
+      "id": "minutes001",
+      "title": "Board Meeting - October 20, 2023",
+      "meeting_date": "2023-10-20T18:00:00Z",
+      "content": "**Attendees:** President, Secretary, Treasurer, Admin\n**Key Discussions:** Reviewed Q3 financials; approved landscaping; holiday events.\n**Action Items:** Secretary distribute minutes by Oct 27; Treasurer finalize Q3 report.",
+      "content_type": "markdown",
+      "status": "published",
+      "created_by_user_id": "secretary@bp.com",
+      "created_at": "2023-10-21T09:00:00Z",
+      "published_at": "2023-10-25T10:00:00Z"
+    },
+    {
+      "id": "minutes002",
+      "title": "Annual General Meeting - September 10, 2023",
+      "meeting_date": "2023-09-10T10:00:00Z",
+      "content": "https://example.com/agm_minutes_2023.pdf",
+      "content_type": "pdf",
+      "status": "published",
+      "created_by_user_id": "secretary@bp.com",
+      "created_at": "2023-09-11T14:00:00Z",
+      "published_at": "2023-09-15T11:00:00Z"
+    },
+    {
+      "id": "minutes003",
+      "title": "Emergency Board Meeting - November 5, 2023 (Draft)",
+      "meeting_date": "2023-11-05T17:00:00Z",
+      "content": "**Topic:** Urgent water pipe burst near Cabin 5.\n**Discussion:** Immediate repair actions; owner communication.",
+      "content_type": "markdown",
+      "status": "draft",
+      "created_by_user_id": "secretary@bp.com",
+      "created_at": "2023-11-06T09:30:00Z",
+      "published_at": null
+    }
+  ],
+  "special_assessments": [
+    {
+      "id": "sa001",
+      "reason": "Road Paving Project",
+      "assessment_date": "2024-01-15",
+      "total_amount": 15000.00,
+      "created_by_user_id": "admin@bp.com",
+      "created_at": "2024-01-10T09:00:00Z"
+    }
+  ],
+  "special_assessment_invoices": [
+    {
+      "id": "sainv001A",
+      "special_assessment_id": "sa001",
+      "cabin_id": "cabin100",
+      "owner_id": "owner1",
+      "amount_due": 5000.00,
+      "due_date": "2024-02-15",
+      "status": "PENDING",
+      "late_fee_applied": false,
+      "payment_method": null,
+      "payment_timestamp": null
+    },
+    {
+      "id": "sainv001B",
+      "special_assessment_id": "sa001",
+      "cabin_id": "cabin102",
+      "owner_id": "owner2",
+      "amount_due": 5000.00,
+      "due_date": "2024-02-15",
+      "status": "PENDING",
+      "late_fee_applied": false,
+      "payment_method": null,
+      "payment_timestamp": null
+    }
+  ],
+  "service_requests": [
+    {
+      "id": "sr001",
+      "category": "DEAD_TREE",
+      "submitted_by_user_id": "adam@bp.com",
+      "description": "There's a large dead pine tree near the entrance of Cabin 134 that looks like it could fall on the road.",
+      "created_at": "2024-03-01T10:00:00Z",
+      "status": "OPEN"
+    },
+    {
+      "id": "sr002",
+      "category": "WEBSITE_CORRECTION",
+      "submitted_by_user_id": "secretary@bp.com",
+      "description": "The contact number for the HOA president on the 'Contact Us' page is outdated.",
+      "created_at": "2024-03-05T14:00:00Z",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "sr003",
+      "category": "FEATURE_REQUEST",
+      "submitted_by_user_id": "adam@bp.com",
+      "description": "Could we add a feature to upload photos to message board posts?",
+      "created_at": "2024-02-20T11:00:00Z",
+      "status": "RESOLVED"
+    }
+  ],
+  "vote_items": [
+    {
+      "id": "vote001",
+      "title": "Approve 2024 Annual Budget",
+      "description": "The proposed 2024 annual budget is available for review. [Link to Budget Document](/documents/2024_budget.pdf)",
+      "meeting_date": "2024-04-15",
+      "created_by_user_id": "admin@bp.com",
+      "created_at": "2024-04-01T09:00:00Z",
+      "is_active": true,
+      "votes_visible": false
+    },
+    {
+      "id": "vote002",
+      "title": "Elect New Board Member",
+      "description": "Vote for the new board member. Candidates: John Doe, Jane Smith.",
+      "meeting_date": "2024-04-15",
+      "created_by_user_id": "president@bp.com",
+      "created_at": "2024-04-01T10:00:00Z",
+      "is_active": true,
+      "votes_visible": false
+    },
+    {
+      "id": "vote003",
+      "title": "Approve Common Area Landscaping Project",
+      "description": "Proposal held during Q4 2023 meeting; see cost estimates.",
+      "meeting_date": "2023-12-10",
+      "created_by_user_id": "secretary@bp.com",
+      "created_at": "2023-11-20T11:00:00Z",
+      "is_active": false,
+      "votes_visible": true
+    }
+  ],
+  "votes": [
+    {
+      "id": "voter003_cabin100",
+      "vote_item_id": "vote003",
+      "cabin_id": "cabin100",
+      "voter_owner_id": "owner1",
+      "cast_by_user_id": "owner1",
+      "choice": "YES",
+      "created_at": "2023-12-10T14:05:00Z"
+    },
+    {
+      "id": "voter003_cabin102",
+      "vote_item_id": "vote003",
+      "cabin_id": "cabin102",
+      "voter_owner_id": "owner2",
+      "cast_by_user_id": "owner2",
+      "choice": "YES",
+      "created_at": "2023-12-10T14:10:00Z"
+    },
+    {
+      "id": "voter003_cabin134",
+      "vote_item_id": "vote003",
+      "cabin_id": "cabin134",
+      "voter_owner_id": "owner_adam",
+      "cast_by_user_id": "owner1",
+      "choice": "ABSTAIN",
+      "created_at": "2023-12-10T14:15:00Z"
+    }
+  ],
+  "talent_listings": [
+    {
+      "id": "talent001",
+      "name": "John Doe Realty",
+      "category": "REALTOR",
+      "phone": "555-123-4567",
+      "email": "john.doe@example.com",
+      "website": "https://johndoerealty.com",
+      "description": "Experienced local realtor specializing in cabin sales.",
+      "submitted_by_user_id": "adam@bp.com",
+      "submitted_at": "2024-01-01T10:00:00Z",
+      "is_approved": true,
+      "status": "APPROVED"
+    },
+    {
+      "id": "talent002",
+      "name": "Mountain Haulers",
+      "category": "HAULING",
+      "phone": "555-987-6543",
+      "email": "info@mountainhaulers.com",
+      "website": "https://mountainhaulers.net",
+      "description": "Reliable hauling services for debris, furniture, and more.",
+      "submitted_by_user_id": "admin@bp.com",
+      "submitted_at": "2024-01-05T11:30:00Z",
+      "is_approved": true,
+      "status": "APPROVED"
+    },
+    {
+      "id": "talent003",
+      "name": "Sparky's Electric",
+      "category": "ELECTRICIAN",
+      "phone": "555-222-3333",
+      "email": "sparky@example.com",
+      "website": null,
+      "description": "Certified electrician for all your cabin's electrical needs.",
+      "submitted_by_user_id": "adam@bp.com",
+      "submitted_at": "2024-01-10T14:00:00Z",
+      "is_approved": false,
+      "status": "PENDING"
+    },
+    {
+      "id": "talent004",
+      "name": "Clean & Cozy Cabins",
+      "category": "CLEANING",
+      "phone": "555-444-5555",
+      "email": "cleanandcozy@example.com",
+      "website": "https://cleanandcozy.com",
+      "description": "Professional cleaning services for short-term rentals and private cabins.",
+      "submitted_by_user_id": "secretary@bp.com",
+      "submitted_at": "2024-01-15T09:00:00Z",
+      "is_approved": true,
+      "status": "APPROVED"
+    }
+  ],
+  "faq_entries": [
+    {
+      "id": "faq001",
+      "question": "What are the annual HOA dues?",
+      "answer": "Annual HOA dues are **$1,200 per cabin**, payable quarterly at $300.",
+      "order": 1,
+      "last_updated_at": "2023-10-01T08:00:00Z",
+      "updated_by_user_id": "admin@bp.com"
+    },
+    {
+      "id": "faq002",
+      "question": "How do I report a maintenance issue?",
+      "answer": "Use the 'Submit Service Request' link in your portal with details and photos.",
+      "order": 2,
+      "last_updated_at": "2023-10-01T08:00:00Z",
+      "updated_by_user_id": "admin@bp.com"
+    },
+    {
+      "id": "faq003",
+      "question": "Are there rules for exterior renovations?",
+      "answer": "Yes—submit plans for setbacks, materials, and colors approval.",
+      "order": 3,
+      "last_updated_at": "2023-10-01T08:00:00Z",
+      "updated_by_user_id": "admin@bp.com"
+    },
+    {
+      "id": "faq004",
+      "question": "Can I rent out my cabin on Airbnb?",
+      "answer": "Allowed with HOA guest rules; see Local Talent Directory for management services.",
+      "order": 4,
+      "last_updated_at": "2023-10-01T08:00:00Z",
+      "updated_by_user_id": "admin@bp.com"
+    },
+    {
+      "id": "faq005",
+      "question": "Where can I find the bylaws?",
+      "answer": "In the HOA Rules & Regulations section of the portal.",
+      "order": 5,
+      "last_updated_at": "2023-10-01T08:00:00Z",
+      "updated_by_user_id": "admin@bp.com"
+    },
+    {
+      "id": "faq006",
+      "question": "What is the policy on pets?",
+      "answer": "Pets on leash; owners clean up; no aggressive behavior.",
+      "order": 6,
+      "last_updated_at": "2023-10-01T08:00:00Z",
+      "updated_by_user_id": "admin@bp.com"
+    },
+    {
+      "id": "faq007",
+      "question": "How do I get a key to the lodge?",
+      "answer": "Contact the HOA Secretary via email or phone.",
+      "order": 7,
+      "last_updated_at": "2023-10-01T08:00:00Z",
+      "updated_by_user_id": "admin@bp.com"
+    },
+    {
+      "id": "faq008",
+      "question": "When is the next annual meeting?",
+      "answer": "Annually in April; notices sent 30 days prior.",
+      "order": 8,
+      "last_updated_at": "2023-10-01T08:00:00Z",
+      "updated_by_user_id": "admin@bp.com"
+    },
+    {
+      "id": "faq009",
+      "question": "Can I build a fence?",
+      "answer": "Submit detailed plan for architectural review and approval.",
+      "order": 9,
+      "last_updated_at": "2023-10-01T08:00:00Z",
+      "updated_by_user_id": "admin@bp.com"
+    },
+    {
+      "id": "faq010",
+      "question": "What to do in a power outage?",
+      "answer": "Check neighbors, report to utility, then check breakers.",
+      "order": 10,
+      "last_updated_at": "2023-10-01T08:00:00Z",
+      "updated_by_user_id": "admin@bp.com"
+    },
+    {
+      "id": "faq011",
+      "question": "How are special assessments determined?",
+      "answer": "Board-proposed, owner-voted for unexpected large expenses.",
+      "order": 11,
+      "last_updated_at": "2023-10-01T08:00:00Z",
+      "updated_by_user_id": "admin@bp.com"
+    }
+  ],
+  "documents": [
+    {
+      "id": "doc001",
+      "title": "HOA Bylaws (2023 Revision)",
+      "description": "Official governing bylaws.",
+      "file_url": "/documents/HOA_Bylaws_2023.pdf",
+      "category": "BYLAWS",
+      "visibility": "PUBLIC",
+      "uploaded_by_user_id": "admin@bp.com",
+      "uploaded_at": "2023-09-01T10:00:00Z"
+    },
+    {
+      "id": "doc002",
+      "title": "Annual Meeting Minutes - 2023",
+      "description": "Minutes from September 10, 2023 AGM.",
+      "file_url": "/documents/AGM_Minutes_2023.pdf",
+      "category": "MEETING_MINUTES",
+      "visibility": "LOGGED_IN_ONLY",
+      "uploaded_by_user_id": "secretary@bp.com",
+      "uploaded_at": "2023-09-15T11:00:00Z"
+    },
+    {
+      "id": "doc003",
+      "title": "Q4 2023 Financial Report",
+      "description": "Fourth quarter financials.",
+      "file_url": "/documents/Q4_2023_Financial_Report.pdf",
+      "category": "FINANCIAL_REPORTS",
+      "visibility": "OWNERS_ONLY",
+      "uploaded_by_user_id": "treasurer@bp.com",
+      "uploaded_at": "2024-01-20T14:00:00Z"
+    },
+    {
+      "id": "doc004",
+      "title": "Architectural Review Request Form",
+      "description": "Form for exterior renovations.",
+      "file_url": "/documents/Architectural_Review_Form.pdf",
+      "category": "FORMS",
+      "visibility": "PUBLIC",
+      "uploaded_by_user_id": "admin@bp.com",
+      "uploaded_at": "2023-05-01T09:00:00Z"
+    },
+    {
+      "id": "doc005",
+      "title": "Community Map - High Resolution",
+      "description": "Map of cabins and common areas.",
+      "file_url": "/documents/Bear_Paw_Community_Map_HR.jpg",
+      "category": "MAPS",
+      "visibility": "LOGGED_IN_ONLY",
+      "uploaded_by_user_id": "admin@bp.com",
+      "uploaded_at": "2023-03-10T16:00:00Z"
+    },
+    {
+      "id": "doc006",
+      "title": "Board Meeting Agenda - April 2024",
+      "description": "Agenda for April 15, 2024 meeting.",
+      "file_url": "/documents/Board_Meeting_Agenda_April_2024.pdf",
+      "category": "MEETING_MINUTES",
+      "visibility": "BOARD_ONLY",
+      "uploaded_by_user_id": "secretary@bp.com",
+      "uploaded_at": "2024-04-01T08:00:00Z"
+    },
+    {
+      "id": "doc007",
+      "title": "Emergency Contact List (Board Only)",
+      "description": "Board member contacts.",
+      "file_url": "/documents/Emergency_Contacts_Board_Only.xlsx",
+      "category": "OTHER",
+      "visibility": "ADMIN_ONLY",
+      "uploaded_by_user_id": "admin@bp.com",
+      "uploaded_at": "2024-01-01T12:00:00Z"
+    }
+  ],
+  "audit_logs": [
+    {
+      "id": "log001",
+      "timestamp": "2024-07-20T10:00:00Z",
+      "user_id": "admin@bp.com",
+      "action": "user_login",
+      "resource_type": "user",
+      "resource_id": "admin_user",
+      "details": "Admin user logged in successfully."
+    },
+    {
+      "id": "log002",
+      "timestamp": "2024-07-20T10:05:00Z",
+      "user_id": "admin@bp.com",
+      "action": "document_uploaded",
+      "resource_type": "document",
+      "resource_id": "doc008",
+      "details": "Uploaded 'New Policy Document.pdf' to Bylaws category."
+    },
+    {
+      "id": "log003",
+      "timestamp": "2024-07-20T10:15:00Z",
+      "user_id": "adam@bp.com",
+      "action": "service_request_submitted",
+      "resource_type": "service_request",
+      "resource_id": "sr004",
+      "details": "Submitted service request: 'Leaky faucet in Cabin 134'."
+    },
+    {
+      "id": "log004",
+      "timestamp": "2024-07-20T10:30:00Z",
+      "user_id": "treasurer@bp.com",
+      "action": "invoice_updated",
+      "resource_type": "invoice",
+      "resource_id": "inv002",
+      "details": "Updated invoice status to PAID, recorded check payment."
+    },
+    {
+      "id": "log005",
+      "timestamp": "2024-07-20T11:00:00Z",
+      "user_id": "secretary@bp.com",
+      "action": "meeting_minutes_published",
+      "resource_type": "meeting_minutes",
+      "resource_id": "minutes001",
+      "details": "Published 'Board Meeting - October 20, 2023' minutes."
+    },
+    {
+      "id": "log006",
+      "timestamp": "2024-07-20T11:30:00Z",
+      "user_id": "admin@bp.com",
+      "action": "talent_listing_approved",
+      "resource_type": "talent_listing",
+      "resource_id": "talent003",
+      "details": "Approved 'Sparky's Electric' listing."
+    },
+    {
+      "id": "log007",
+      "timestamp": "2024-07-20T12:00:00Z",
+      "user_id": "president@bp.com",
+      "action": "notification_created",
+      "resource_type": "notification",
+      "resource_id": "notif005",
+      "details": "Created new flash notification: 'Road Closure Alert'."
+    },
+    {
+      "id": "log008",
+      "timestamp": "2024-07-20T13:00:00Z",
+      "user_id": "adam@bp.com",
+      "action": "vote_cast",
+      "resource_type": "poll",
+      "resource_id": "vote001",
+      "details": "Cast 'Yes' vote for 'Approve 2024 Annual Budget'."
+    },
+    {
+      "id": "log009",
+      "timestamp": "2024-07-20T14:00:00Z",
+      "user_id": "admin@bp.com",
+      "action": "owner_created",
+      "resource_type": "owner",
+      "resource_id": "ownerNew",
+      "details": "Created new owner 'New Cabin Owner'."
+    },
+    {
+      "id": "log010",
+      "timestamp": "2024-07-20T15:00:00Z",
+      "user_id": "secretary@bp.com",
+      "action": "agenda_request_reviewed",
+      "resource_type": "agenda_request",
+      "resource_id": "agenda001",
+      "details": "Marked agenda request 'Proposal for new community sign' as reviewed."
+    }
+  ]
+}
+
+
